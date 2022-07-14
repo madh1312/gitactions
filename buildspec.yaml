@@ -1,0 +1,38 @@
+version: 0.2
+
+env:
+  variables:
+      WORKSPACE_REGION_URL: "https://dbc-6ce36555-d03b.cloud.databricks.com"
+      TOKEN: "dapi0030b6cdc004526d839c4f0a3254f5fb"
+	  CLUSTER_ID: "0714-065200-rj797bi3"
+	  ORG_ID: "3673249481178269"
+
+phases:
+  install:
+    runtime-versions:
+       python: 3.8
+    commands:
+       - pip3 install pytest requests setuptools wheel
+       - pip3 install -U databricks-connect--6.4
+	     - apt-get update
+       - apt-get -y install openjdk-8-jdk
+       - update-java-alternatives -s java-1.8.0-openjdk-amd64
+       - export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/bin
+  pre_build:
+    commands:
+       - echo "y $(WORKSPACE_REGION_URL) $(TOKEN) $(CLUSTER_ID) $(ORG_ID) 15001" | databricks-connect configure
+  build:
+    commands:
+       - databricks-connect test
+       - echo "testing is done"
+
+#artifacts:
+  #files:
+    # - location
+    # - location
+  #name: $(date +%Y-%m-%d)
+  #discard-paths: yes
+  #base-directory: location
+#cache:
+  #paths:
+    # - paths
